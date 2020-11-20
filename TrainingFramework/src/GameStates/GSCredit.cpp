@@ -19,7 +19,7 @@ GSCredit::~GSCredit()
 void GSCredit::Init()
 {
 	auto model = ResourceManagers::GetInstance()->GetModel("Sprite2D");
-	auto texture = ResourceManagers::GetInstance()->GetTexture("1.1");
+	auto texture = ResourceManagers::GetInstance()->GetTexture("2");
 
 	// background
 	auto shader = ResourceManagers::GetInstance()->GetShader("TextureShader");
@@ -28,18 +28,19 @@ void GSCredit::Init()
 	m_BackGround->SetSize(screenWidth, screenHeight);
 
 	//button back
-	texture = ResourceManagers::GetInstance()->GetTexture("Back");
+	texture = ResourceManagers::GetInstance()->GetTexture("button_back_2");
 	std::shared_ptr<GameButton> button = std::make_shared<GameButton>(model, shader, texture);
 	button->Set2DPosition(screenWidth/2,100);
-	button->SetSize(200, 50);
+	button->SetSize(120, 55);
 	button->SetOnClick([]() {
+		ResourceManagers::GetInstance()->PlaySound("click", false);
 		GameStateMachine::GetInstance()->PopState();
 		});
 	m_listButton.push_back(button);
 
 	// author text
 	shader = ResourceManagers::GetInstance()->GetShader("TextShader");
-	std::shared_ptr<Font> font = ResourceManagers::GetInstance()->GetFont("arialbd");
+	std::shared_ptr<Font> font = ResourceManagers::GetInstance()->GetFont("ariblk");
 	m_Text_gameName = std::make_shared<Text>(shader, font, "Nguyen Lam Sang", TEXT_COLOR::RED, 1.0);
 	m_Text_gameName->Set2DPosition(Vector2(screenWidth / 2 - 100, 300));
 }

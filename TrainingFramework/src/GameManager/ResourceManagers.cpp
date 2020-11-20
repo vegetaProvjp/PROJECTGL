@@ -1,12 +1,12 @@
 #include "ResourceManagers.h"
-#include "GameObject/Shaders.h"
-#include "GameObject/Texture.h"
-#include "GameObject/Models.h"
-#include "GameObject/Camera.h"
-#include "GameObject/Font.h"
-#include "GameObject/Sprite2D.h"
-#include "GameObject/Sprite3D.h"
-#include "GameObject/Text.h"
+#include "Shaders.h"
+#include "Texture.h"
+#include "Models.h"
+#include "Camera.h"
+#include "Font.h"
+#include "Sprite2D.h"
+#include "Sprite3D.h"
+#include "Text.h"
 
 
 ResourceManagers::ResourceManagers()
@@ -16,10 +16,13 @@ ResourceManagers::ResourceManagers()
 	m_TexturePath = dataPath + "Textures\\";
 	m_ModelsPath = dataPath + "Model\\";
 	m_FontPath = dataPath + "fonts\\";
+	m_SoundPath = dataPath + "Sound\\";
+	m_Soloud.init();
 }
 
 ResourceManagers::~ResourceManagers()
 {
+	m_Soloud.deinit();
 }
 
 void ResourceManagers::AddShader(const std::string& name)
@@ -157,4 +160,56 @@ std::shared_ptr<Font> ResourceManagers::GetFont(const std::string& name)
 	std::shared_ptr<Font> font = std::make_shared<Font>(path);
 	m_MapFont.insert(std::pair<std::string, std::shared_ptr<Font>>(name, font));
 	return font;
+}
+
+void ResourceManagers::AddSound(const std::string& name)
+{
+	auto it = m_MapWave.find(name);
+	if (it != m_MapWave.end())
+	{
+		return;
+	}
+	std::shared_ptr<SoLoud::Wav> wave;
+	std::string wav = m_SoundPath + name + ".mp3";
+	wave = std::make_shared<SoLoud::Wav>();
+	m_MapWave.insert(std::pair<std::string, std::shared_ptr<SoLoud::Wav>>(name, wave));
+}
+
+void ResourceManagers::PlaySound(const std::string& name, bool loop)
+{
+
+	std::shared_ptr<SoLoud::Wav> wave;
+	auto it = m_MapWave.find(name);
+	if (it != m_MapWave.end())
+	{
+		wave = it->second;
+	}
+	else
+	{
+		std::string wav = m_SoundPath + name + ".mp3";
+		wave = std::make_shared<SoLoud::Wav>();
+		wave->load(wav.c_str());
+		m_MapWave.insert(std::pair<std::string, std::shared_ptr<SoLoud::Wav>>(name, wave));
+	}
+	SoLoud::time tm = wave->getLength();
+
+	wave->setLooping(loop);
+
+	m_Soloud.play(*wave);
+
+
+}
+
+
+
+void ResourceManagers::PauseSound(const std::string& name)
+{
+	std::shared_ptr<SoLoud::Wav> wave;
+	auto it = m_MapWave.find(name);
+	if (it != m_MapWave.end())
+	{
+		wave = it->second;
+	}
+	m_Soloud.stopAudioSource(*wave);
+
 }
