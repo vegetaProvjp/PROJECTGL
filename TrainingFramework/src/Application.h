@@ -14,6 +14,8 @@ public:
 	void		HandleKeyEvent(unsigned char key, bool bIsPresseded);
 	void		HandleTouchEvent(GLint x, GLint y, bool bIsPresseded);
 	void		Exit();
+	void 		Abcd();
+
 
 private:
 	
